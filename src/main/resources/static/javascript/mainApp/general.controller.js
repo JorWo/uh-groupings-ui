@@ -695,6 +695,7 @@
          * Small function that resets the checkboxes on the page
          */
         function resetCheckboxes() {
+            $scope.allSelected = false;
             for (let member of Object.values($scope.membersInCheckboxList)) {
                 member = false;
             }
@@ -708,7 +709,7 @@
             switch (listName) {
                 case "Include":
                 case "Exclude":
-                case "owners:":
+                case "owners":
                     $scope.manageMembers = "";
                     $scope.membersNotInList = "";
                     $scope.membersInList = "";
@@ -1380,9 +1381,7 @@
             // Set information for the remove/multiRemove modal
             const memberObject = $scope.returnMemberObject($scope.membersToRemove[0], $scope.listName);
             $scope.initMemberDisplayName(memberObject);
-            $scope.isMultiRemove = _.isEmpty($scope.multiRemoveResults)
-                ? $scope.membersToRemove.length > 1
-                : $scope.multiRemoveResults.length > 1;
+            $scope.isMultiRemove = $scope.multiRemoveResults.length > 1
 
             // Open remove or multiRemove modal and set modal red when removing yourself (currentUser) from owners
             const templateUrl = $scope.isMultiRemove ? "modal/multiRemoveModal" : "modal/removeModal";
@@ -1437,11 +1436,12 @@
                 memberToRemove = $scope.pagedItemsExclude[currentPage][index];
             }
 
+            $scope.membersNotInList = "";
+            $scope.multiRemoveResults = [];
             $scope.displayRemoveModal({
                 membersToRemove: memberToRemove,
                 listName
             });
-            $scope.membersToRemove = [memberToRemove.uhUuid];
         };
 
         /**
@@ -1463,7 +1463,6 @@
                 membersToRemove: ownerToRemove,
                 listName: "owners"
             });
-            $scope.membersToRemove = [ownerToRemove.uhUuid];
         };
 
 
